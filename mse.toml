@@ -1,0 +1,10 @@
+name = "demo-mse-gpt"
+project = "default"
+hardware = "4g-eu-001"
+
+[code]
+location = "mse_src"
+docker = "ghcr.io/cosmian/mse-flask:20230228091325"
+python_application = "app:app"
+healthcheck_endpoint = "/health"
+
