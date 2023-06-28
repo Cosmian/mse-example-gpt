@@ -7,6 +7,7 @@ The MSE app is composed of the following files:
 ```bash
 ├── mse_src                   # Code folder to encrypt and deploy in the enclave
 │   ├── app.py                # Flask application
+│   ├── ggml-model-q4_0.bin   # EleutherAI/pythia-1b model weights
 │   └── requirements.txt      # Python packages to install during deployment
 └── mse.toml                  # MSE config file
 ```
@@ -32,6 +33,8 @@ mse_src/
 ```
 
 ## 2 - Deploy
+
+* Create an account on [console.cosmian.com](console.cosmian.com).
 
 * Install [`mse-cli`](https://docs.cosmian.com/microservice_encryption/getting_started/) on your computer.
 

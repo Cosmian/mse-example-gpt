@@ -18,7 +18,6 @@ llm: AutoModelForCausalLM
 is_model_busy = False
 
 # Model parameters
-MAX_CONTEXT_SIZE = 2048 - 1
 MAX_RESPONSE_SIZE = 64
 
 
@@ -29,10 +28,9 @@ def init():
     Here the model is loaded from disk but it could be downloaded from a secure source.
     """
     global llm
+    model_path = str(CWD_PATH / "ggml-model-q4_0.bin")
     try:
-        llm = AutoModelForCausalLM.from_pretrained(
-            str(CWD_PATH / "ggml-model-q4_0.bin"), model_type="gpt-neox"
-        )
+        llm = AutoModelForCausalLM.from_pretrained(model_path, model_type="gpt-neox")
     except ValueError as e:
         print(f"Model initialization error: {e}")
 
@@ -70,7 +68,8 @@ def generate():
 @app.route("/generate")
 def chat():
     """
-    Route for generating a stream response based on a prompt containing a query and chat history.
+    Route for generating a stream response based on a prompt
+    containing a query and chat history.
     """
     b64_prompt = request.args.get("prompt")
     if not b64_prompt:
