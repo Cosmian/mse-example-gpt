@@ -70,7 +70,11 @@ def main(url: str, use_prompt: bool = False):
     try:
         while True:
             # Read user query
-            user_query = input(colored("User> ", "blue"))
+            user_query = ""
+            while not user_query:
+                user_query = input(colored("User> ", "blue"))
+
+            # Apply custom format for OpenAssistant models
             if use_prompt:
                 user_query = format_prompt(user_query)
 
@@ -87,8 +91,7 @@ def main(url: str, use_prompt: bool = False):
             for event in client.events():
                 if event.event == "end":
                     break
-
-                string_response = ast.literal_eval(event.data)
+                string_response = str(ast.literal_eval(event.data))
                 # Print the generated text and it to the history
                 print(string_response, end="", flush=True)
                 history += string_response

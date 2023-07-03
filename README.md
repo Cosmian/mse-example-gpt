@@ -41,7 +41,10 @@ mse_src/
 * Test locally
 
 ```bash
-mse test
+$ mse test
+Starting the docker: ghcr.io/cosmian/mse-flask:20230228091325...
+...
+[2023-06-28 14:02:01 +0000] [15] [INFO] Running on http://0.0.0.0:5000 (CTRL + C to quit)
 ```
 
 * Simple text generation test
