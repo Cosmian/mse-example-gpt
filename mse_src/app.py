@@ -1,9 +1,9 @@
 import os
+import threading
 from base64 import b64decode
 from http import HTTPStatus
 from json import dumps
 from pathlib import Path
-from time import sleep
 
 from ctransformers import AutoModelForCausalLM
 from flask import Flask, Response, jsonify, request
@@ -13,12 +13,13 @@ app = Flask(__name__)
 # The model is stored in the current working directory (./mse_src)
 # More information: https://docs.staging.cosmian.com/microservice_encryption_home/develop/#the-paths
 CWD_PATH = Path(os.getenv("MODULE_PATH")).resolve()
-
-llm: AutoModelForCausalLM
-is_model_busy = False
-
 # Model parameters
 MAX_RESPONSE_SIZE = 64
+
+llm: AutoModelForCausalLM
+
+# Concurrent use of the model is not supported
+model_lock = threading.Lock()
 
 
 @app.before_first_request
@@ -46,21 +47,15 @@ def health_check():
 @app.route("/generate", methods=["POST"])
 def generate():
     """Route for generating a response based on a query."""
+    global model_lock
+
     query = request.json.get("query")
     if not query:
         return Response(status=HTTPStatus.BAD_REQUEST)
 
-    # Check if the model is already busy generating a response
-    global is_model_busy
-    while is_model_busy:
-        sleep(1)
-    is_model_busy = True
-
-    # Generate a response using the model
-    res = llm(query, seed=123, threads=3, max_new_tokens=MAX_RESPONSE_SIZE)
-
-    # Release model
-    is_model_busy = False
+    with model_lock:  # Acquire model lock
+        # Generate a response using the model
+        res = llm(query, seed=123, threads=3, max_new_tokens=MAX_RESPONSE_SIZE)
 
     return jsonify({"response": res})
 
@@ -81,25 +76,20 @@ def chat():
     context_tokens = llm.tokenize(prompt)[-max_context_size:]
 
     def stream_response():
-        global is_model_busy
-        while is_model_busy:
-            sleep(1)
-        is_model_busy = True
-
+        global model_lock
         msg_id = 0
 
-        # Stream model tokens as they are being generated
-        for token in llm.generate(context_tokens, seed=123, threads=3):
-            msg_id += 1
-            msg_str = dumps(llm.detokenize(token))
+        with model_lock:  # Acquire model lock
+            # Stream model tokens as they are being generated
+            for token in llm.generate(context_tokens, seed=123, threads=3):
+                msg_id += 1
+                msg_str = dumps(llm.detokenize(token))
 
-            yield f"id: {msg_id}\nevent: data\ndata: {msg_str}\n\n"
+                yield f"id: {msg_id}\nevent: data\ndata: {msg_str}\n\n"
 
-            if msg_id == MAX_RESPONSE_SIZE:
-                break
+                if msg_id == MAX_RESPONSE_SIZE:
+                    break
 
-        # Release model
-        is_model_busy = False
         # End stream
         yield f"id: {msg_id + 1}\nevent: end\ndata: {{}}\n\n"
 
