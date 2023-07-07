@@ -1,5 +1,7 @@
 # Deploy Large Language Models on MSE
 
+> Blog post associated with this repository: [link](https://cosmian.com/protecting-privacy-in-the-age-of-chatgpt-with-cosmian-encryption/)
+
 Example of a simple [MSE application](https://docs.cosmian.com/microservice_encryption/overview/) to perform __confidential__ inference on LLM.
 
 The MSE app is composed of the following files:
@@ -34,8 +36,6 @@ mse_src/
 
 ## 2 - Deploy
 
-* Create an account on [console.cosmian.com](console.cosmian.com).
-
 * Install [`mse-cli`](https://docs.cosmian.com/microservice_encryption/getting_started/) on your computer.
 
 * Test locally
@@ -54,6 +54,8 @@ curl -X POST http://localhost:5000/generate \
      -H 'Content-Type: application/json' \
      -d '{"query":"User data protection is important for AI applications since"}'
 ```
+
+* Create an account on [console.cosmian.com](console.cosmian.com).
 
 * Deploy on MSE
 

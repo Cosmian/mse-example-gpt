@@ -1,1 +1,1 @@
-ctransformers==0.2.10
+ctransformers==0.2.11
