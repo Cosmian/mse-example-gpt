@@ -41,26 +41,19 @@ mse_src/
 * Test locally
 
 ```bash
-$ mse test
-Starting the docker: ghcr.io/cosmian/mse-flask:20230228091325...
+$ mse cloud localtest
 ...
-[2023-06-28 14:02:01 +0000] [15] [INFO] Running on http://0.0.0.0:5000 (CTRL + C to quit)
+test_app.py . 
+
+============================================ 1 passed in 0.05s
 ```
 
-* Simple text generation test
-
-```bash
-curl -X POST http://localhost:5000/generate \
-     -H 'Content-Type: application/json' \
-     -d '{"query":"User data protection is important for AI applications since"}'
-```
-
-* Create an account on [console.cosmian.com](console.cosmian.com).
+* Create an account on [console.cosmian.com](https://console.cosmian.com).
 
 * Deploy on MSE
 
 ```bash
-$ mse deploy
+$ mse cloud deploy
 ...
 Deploying your app 'demo-mse-gpt' with 4096M memory and 3.00 CPU cores...
 ...
