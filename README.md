@@ -43,9 +43,10 @@ mse_src/
 ```bash
 $ mse cloud localtest
 ...
-test_app.py . 
+test_app.py ...
 
-============================================ 1 passed in 0.05s
+============================================ 3 passed in 3.05s
+Tests successful
 ```
 
 * Create an account on [console.cosmian.com](https://console.cosmian.com).
