@@ -10,9 +10,12 @@ from termcolor import colored
 from utils.cert import get_ssl_certificate
 
 
-def format_prompt(query: str):
-    """Formats the user prompt for OpenAssistant models."""
-    return f"<|prompter|>{query}<|endoftext|><|assistant|>"
+def format_prompt(query: str, history: str):
+    """Formats the user prompt for Llama models."""
+    if len(history) == 0:
+        return f"[INST] <<SYS>>\nYou are a helpful assistant.\n<</SYS>>\n\n{query} [/INST] "
+    else:
+        return f"[INST] {query} [/INST] "
 
 
 def b64_encode_str(input: str, encoding="utf-8") -> str:
@@ -76,7 +79,7 @@ def main(url: str, use_prompt: bool = False):
 
             # Apply custom format for OpenAssistant models
             if use_prompt:
-                user_query = format_prompt(user_query)
+                user_query = format_prompt(user_query, history)
 
             # Append the user query to the history
             history += user_query
@@ -107,7 +110,7 @@ if __name__ == "__main__":
     parser.add_argument(
         "--prompt",
         action="store_true",
-        help="Use Open Assistant prompt (<|prompter|>, <|assistant|>)",
+        help="Use Llama prompt formatting",
     )
 
     try:
